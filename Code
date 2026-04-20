@@ -1,24 +1,26 @@
 import spacy
 
-# Load English model
+# Load model
 nlp = spacy.load("en_core_web_sm")
 
 # Input text
-text = "John enjoys playing football while Mary loves reading books in the library."
+text = "Chris met Alex at Apple headquarters in California. He told him about the new iPhone launch."
 
-# Process text
 doc = nlp(text)
 
-# Step 1: Tokenization
-tokens = [token.text for token in doc]
-print("Tokens:", tokens)
+# Step 1: Named Entity Recognition
+print("Named Entities:")
+for ent in doc.ents:
+    print(ent.text, "-", ent.label_)
 
-# Step 2–4: Remove stopwords, lemmatize, keep nouns & verbs
-filtered_words = []
+# Step 2: Pronoun ambiguity detection
+pronouns = ["he", "she", "they", "him", "her", "them"]
+
+found_pronoun = False
 
 for token in doc:
-    if not token.is_stop:  # remove stopwords
-        if token.pos_ in ["NOUN", "VERB"]:  # keep only nouns & verbs
-            filtered_words.append(token.lemma_)  # lemmatization
+    if token.text.lower() in pronouns:
+        found_pronoun = True
 
-print("Final Output:", filtered_words)
+if found_pronoun:
+    print("Warning: Possible pronoun ambiguity detected!")
